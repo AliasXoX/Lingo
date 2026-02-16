@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-[var(--color-neutral-lighter)]`}
       >
-        <div className="w-full px-3 py-4">
+        <div className="w-full px-3 py-4 mb-12">
           <Navbar 
           content={[
             { label: "Home", href: "/" },

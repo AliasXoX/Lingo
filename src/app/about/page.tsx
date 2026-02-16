@@ -1,10 +1,8 @@
 
 export default function About() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white sm:items-start">
-        <span className="text-2xl font-bold">About Lingo</span>
-      </main>
-    </div>
+    <main className="flex-1 flex-col items-center justify-between px-56">
+      <span>About Lingo</span>
+    </main>
   );
 }

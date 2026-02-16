@@ -1,8 +1,8 @@
 
-export default function Contact() {
+export default function Login() {
   return (
     <main className="flex-1 flex-col items-center justify-between px-56">
-      <span>Contact Us</span>
+      <span>Login</span>
     </main>
   );
 }
