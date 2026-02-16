@@ -1,5 +1,7 @@
 import bcrypt from "bcrypt"
 import { db } from "@/lib/db"
+import { createSession } from "@/lib/session"
+import { redirect } from "next/navigation";
 
 export async function register(formData: FormData) {
     'use server';
@@ -24,18 +26,20 @@ export async function login(formData: FormData) {
     try {
         const result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
         if (result.rows.length === 0) {
-            return { success: false, error: "User not found" };
+            return { success: false, error: "Login Failed" };
         }
 
         const user = result.rows[0];
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return { success: false, error: "Invalid password" };
+            return { success: false, error: "Login Failed" };
         }
 
-        return { success: true };
+        await createSession(user.id, user.username);
     } catch (error) {
         console.error("Error logging in user:", error);
-        return { success: false, error: "Failed to login user" };
+        return { success: false, error: "Login Failed" };
     }
+
+    redirect('/');
 }

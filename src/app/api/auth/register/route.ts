@@ -11,7 +11,7 @@ export async function POST(request: Request) {
                 "Content-Type": "application/json",
             },
         });
-    } catch (error) {
+    } catch {
         return new Response(JSON.stringify({ error: "Failed to create user" }), {
             status: 500,
             headers: {

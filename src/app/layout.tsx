@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../components/style/globals.css";
 import { Navbar } from "../components/molecules/Navbar/Navbar";
+import { getUser } from "../lib/dal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,11 +19,13 @@ export const metadata: Metadata = {
   description: "Language learning app",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getUser();
+  
   return (
     <html lang="en">
       <body
@@ -34,7 +37,8 @@ export default function RootLayout({
             { label: "Home", href: "/" },
             { label: "About", href: "/about" },
             { label: "Contact", href: "/contact" },
-          ]} />
+          ]}
+          username={user?.username ?? undefined} />
         </div>
         {children}
       </body>

@@ -8,11 +8,13 @@ export interface NavbarProps {
     label: string;
     href: string;
   }>;
+  username?: string;
 }
 
 /** Primary UI component for user interaction */
 export const Navbar = ({
   content,
+  username,
   ...props
 }: NavbarProps) => {
   return (
@@ -40,9 +42,20 @@ export const Navbar = ({
         </div>
         
         <div className="flex items-center mr-5">
-            <Link href="/login" className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700">
-                Login
-            </Link>
+            {username ? (
+                <div>
+                    <span className="text-xl font-[family-name:var(--font-header)] font-bold mr-5">
+                        {username}
+                    </span>
+                    <Link href="/logout" className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700">
+                        Logout
+                    </Link>
+                </div>
+            ) : (
+                <Link href="/login" className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700">
+                    Login
+                </Link>
+            )}
         </div>
     </nav>
   );

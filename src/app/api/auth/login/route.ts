@@ -12,7 +12,7 @@ export async function POST(request: Request) {
             },
         });
     }
-    catch (error) {
+    catch {
         return new Response(JSON.stringify({ error: "Failed to login" }), {
             status: 500,
             headers: {
