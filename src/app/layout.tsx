@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../components/style/globals.css";
 import { Navbar } from "../components/molecules/Navbar/Navbar";
 import { getUser } from "../lib/dal";
+import { logout } from "./actions/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,9 @@ export default async function RootLayout({
             { label: "About", href: "/about" },
             { label: "Contact", href: "/contact" },
           ]}
-          username={user?.username ?? undefined} />
+          username={user?.username ?? undefined} 
+          onLogout={logout}
+          />
         </div>
         {children}
       </body>

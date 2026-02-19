@@ -9,12 +9,14 @@ export interface NavbarProps {
     href: string;
   }>;
   username?: string;
+  onLogout?: () => void;
 }
 
 /** Primary UI component for user interaction */
 export const Navbar = ({
   content,
   username,
+  onLogout,
   ...props
 }: NavbarProps) => {
   return (
@@ -47,9 +49,12 @@ export const Navbar = ({
                     <span className="text-xl font-[family-name:var(--font-header)] font-bold mr-5">
                         {username}
                     </span>
-                    <Link href="/logout" className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700">
+                    <button
+                        onClick={onLogout}
+                        className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700"
+                    >
                         Logout
-                    </Link>
+                    </button>
                 </div>
             ) : (
                 <Link href="/login" className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700">

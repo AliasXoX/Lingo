@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt"
 import { db } from "@/lib/db"
-import { createSession } from "@/lib/session"
+import { createSession, deleteSession } from "@/lib/session"
 import { redirect } from "next/navigation";
 
 export async function register(formData: FormData) {
@@ -41,5 +41,11 @@ export async function login(formData: FormData) {
         return { success: false, error: "Login Failed" };
     }
 
+    redirect('/');
+}
+
+export async function logout() {
+    'use server';
+    await deleteSession();
     redirect('/');
 }
