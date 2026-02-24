@@ -28,14 +28,16 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Primary: Story = {
   args: {
+    selectedBox: 0,
+    setSelectedBox: fn(),
     boxes: [
-        { rest: 3, total: 10, selected: true },
-        { rest: 5, total: 10, selected: false },
-        { rest: 2, total: 10, selected: false },
-        { rest: 7, total: 10, selected: false },
-        { rest: 1, total: 10, selected: false },
-        { rest: 0, total: 10, selected: false },
-        { rest: 4, total: 10, selected: false },
+        { rest: 3, total: 10 },
+        { rest: 5, total: 10 },
+        { rest: 2, total: 10 },
+        { rest: 7, total: 10 },
+        { rest: 1, total: 10 },
+        { rest: 0, total: 10 },
+        { rest: 4, total: 10 },
     ],
     inputWord: "Hello",
     formAction: fn(),
@@ -45,14 +47,16 @@ export const Primary: Story = {
 
 export const WithError: Story = {
   args: {
+    selectedBox: 0,
+    setSelectedBox: fn(),
     boxes: [
-        { rest: 3, total: 10, selected: true },
-        { rest: 5, total: 10, selected: false },
-        { rest: 2, total: 10, selected: false },
-        { rest: 7, total: 10, selected: false },
-        { rest: 1, total: 10, selected: false },
-        { rest: 0, total: 10, selected: false },
-        { rest: 4, total: 10, selected: false },
+        { rest: 3, total: 10 },
+        { rest: 5, total: 10 },
+        { rest: 2, total: 10 },
+        { rest: 7, total: 10 },
+        { rest: 1, total: 10 },
+        { rest: 0, total: 10 },
+        { rest: 4, total: 10 },
     ],
     inputWord: "Hello",
     formAction: fn(),
@@ -65,14 +69,16 @@ export const WithError: Story = {
 
 export const WithCorrectAnswer: Story = {
   args: {
+    selectedBox: 0,
+    setSelectedBox: fn(),
     boxes: [
-        { rest: 3, total: 10, selected: true },
-        { rest: 5, total: 10, selected: false },
-        { rest: 2, total: 10, selected: false },
-        { rest: 7, total: 10, selected: false },
-        { rest: 1, total: 10, selected: false },
-        { rest: 0, total: 10, selected: false },
-        { rest: 4, total: 10, selected: false },
+        { rest: 3, total: 10 },
+        { rest: 5, total: 10 },
+        { rest: 2, total: 10 },
+        { rest: 7, total: 10 },
+        { rest: 1, total: 10 },
+        { rest: 0, total: 10 },
+        { rest: 4, total: 10 },
     ],
     inputWord: "Hello",
     formAction: fn(),
@@ -85,14 +91,16 @@ export const WithCorrectAnswer: Story = {
 
 export const WithIncorrectAnswer: Story = {
   args: {
+    selectedBox: 0,
+    setSelectedBox: fn(),
     boxes: [
-        { rest: 3, total: 10, selected: true },
-        { rest: 5, total: 10, selected: false },
-        { rest: 2, total: 10, selected: false },
-        { rest: 7, total: 10, selected: false },
-        { rest: 1, total: 10, selected: false },
-        { rest: 0, total: 10, selected: false },
-        { rest: 4, total: 10, selected: false },
+        { rest: 3, total: 10 },
+        { rest: 5, total: 10 },
+        { rest: 2, total: 10 },
+        { rest: 7, total: 10 },
+        { rest: 1, total: 10 },
+        { rest: 0, total: 10 },
+        { rest: 4, total: 10 },
     ],
     inputWord: "Hello",
     formAction: fn(),

@@ -19,6 +19,7 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@storybook/addon-docs": "^10.2.12",
     "@storybook/nextjs": "^10.2.11",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
