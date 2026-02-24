@@ -1,5 +1,5 @@
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Is this the principal call to action on the page? */
   primary?: boolean;
   /** What background color to use */
@@ -14,12 +14,13 @@ export const Button = ({
   primary = false,
   backgroundColor,
   children,
+  className = '',
   ...props
 }: ButtonProps) => {
   return (
     <button
       type="button"
-      className="cursor-pointer bg-amber-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-900 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2"
+      className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium text-gray-900 ${className}`}
       style={{ backgroundColor : backgroundColor }}
       {...props}
     >

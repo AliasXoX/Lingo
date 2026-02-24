@@ -32,7 +32,7 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            className="bg-blue-500 w-full text-2xl text-white rounded px-4 py-2 mt-8 cursor-pointer hover:bg-blue-600 transition-colors duration-300"
+            className="bg-blue-600 w-full text-2xl text-white rounded px-4 py-2 mt-8 cursor-pointer hover:bg-blue-700 transition-colors duration-300"
           >
             Login
           </button>
