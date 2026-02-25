@@ -9,10 +9,21 @@
   --color-neutral-darker: #616161;
   --color-neutral-darkest: #212121;
 
+  --color-modal-bg: rgba(0, 0, 0, 0.5);
+
+  --color-danger: #e60000;
+
+  --color-action-lighter: #849ee1;
+  --color-action-light: #5a7ed8;
+  --color-action-dark: #284ead;
+  --color-action-darker: #1d387c;
+
+
   /* Fonts */
 
   --font-logo: "Satisfy", cursive;
   --font-header: "Edu_NSW_ACT_Cursive", cursive;
   --font-heading: "Carter One", cursive;
   --font-primary: "Capriola", sans-serif;
+  --font-input: "Encode Sans Expanded", sans-serif;
 }

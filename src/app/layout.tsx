@@ -34,7 +34,14 @@ export default async function RootLayout({
       >
         <div className="w-full px-3 py-4">
           <Navbar 
-          content={[
+          content={ user ?  [
+            { label: "Home", href: "/" },
+            { label: "About", href: "/about" },
+            { label: "Contact", href: "/contact" },
+            { label: "Learn", href: "/learn" },
+            { label: "Dictionary", href: "/dictionary" },
+          ]
+            : [
             { label: "Home", href: "/" },
             { label: "About", href: "/about" },
             { label: "Contact", href: "/contact" },

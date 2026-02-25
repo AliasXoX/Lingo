@@ -51,13 +51,13 @@ export const Navbar = ({
                     </span>
                     <button
                         onClick={onLogout}
-                        className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700"
+                        className="bg-[var(--color-action-dark)] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
                     >
                         Logout
                     </button>
                 </div>
             ) : (
-                <Link href="/login" className="bg-[#284ead] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-blue-700">
+                <Link href="/login" className="bg-[var(--color-action-dark)] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]">
                     Login
                 </Link>
             )}
