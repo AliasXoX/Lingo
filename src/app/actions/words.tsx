@@ -50,8 +50,10 @@ export async function addWord(userId: number, formData: FormData) {
     const it = formData.get("it") as string;
     const fr = formData.get("fr") as string;
 
+    const dateNow = new Date();
+
     try {
-        await db.query(`INSERT INTO words (user_id, it, fr, box) VALUES ($1, $2, $3, 0)`, [userId, it, fr]);
+        await db.query(`INSERT INTO words (user_id, it, fr, box, date) VALUES ($1, $2, $3, 0, $4)`, [userId, it, fr, dateNow]);
         return { success: true };
     } catch (error) {
         console.error("Error adding word:", error);
@@ -69,6 +71,16 @@ export async function deleteWord(userId: number, it: string, fr: string) {
     }
 }
 
+export async function editWord(userId: number, oldIt: string, oldFr: string, newIt: string, newFr: string) {
+    try {
+        await db.query(`UPDATE words SET it = $4, fr = $5 WHERE user_id = $1 AND it = $2 AND fr = $3`, [userId, oldIt, oldFr, newIt, newFr]);
+        return { success: true };
+    } catch (error) {
+        console.error("Error editing word:", error);
+        return { success: false, error: "Failed to edit word" };
+    }
+}
+
 export async function getWordsByBox(userId: number, box: number, limit: number = 1000) {
     try {
         const result = await db.query(`SELECT it, fr FROM words WHERE user_id = $1 AND box = $2 LIMIT $3`, [userId, box, limit]);
@@ -76,6 +88,20 @@ export async function getWordsByBox(userId: number, box: number, limit: number =
     } catch (error) {
         console.error("Error fetching words by box:", error);
         return { success: false, error: "Failed to fetch words by box" };
+    }
+}
+
+export async function getWordsByOrder(userId: number, order: string, skip: number = 0, limit: number = 1000) {
+    const validOrders = ["it", "fr"];
+    if (!validOrders.includes(order)) {
+        return { success: false, error: "Invalid order parameter" };
+    }
+    try {
+        const result = await db.query(`SELECT it, fr FROM words WHERE user_id = $1 ORDER BY ${order} LIMIT $2 OFFSET $3`, [userId, limit, skip]);
+        return { success: true, words: result.rows };
+    } catch (error) {
+        console.error("Error fetching words by order:", error);
+        return { success: false, error: "Failed to fetch words by order" };
     }
 }
 
@@ -159,5 +185,16 @@ export async function  getBoxCount(userId: number, box: number) {
     } catch (error) {
         console.error("Error fetching box count:", error);
         return { success: false, error: "Failed to fetch box count" };
+    }
+}
+
+export async function getTotalWordsCount(userId: number) {
+    try {
+        const result = await db.query(`SELECT COUNT(*) as count FROM words WHERE user_id = $1`, [userId]);
+        const total = Number(result.rows[0].count);
+        return { success: true, total: total };
+    } catch (error) {
+        console.error("Error fetching total words count:", error);
+        return { success: false, error: "Failed to fetch total words count" };
     }
 }

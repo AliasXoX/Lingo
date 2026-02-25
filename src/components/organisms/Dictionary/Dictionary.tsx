@@ -10,6 +10,7 @@ export interface DictionaryProps extends React.HTMLAttributes<HTMLDivElement> {
         it: string;
         fr: string;
     }>;
+    page: number;
     nextPage?: () => void;
     prevPage?: () => void;
     disableNext?: boolean;
@@ -20,6 +21,13 @@ export interface DictionaryProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const EditModal = ({ word, isOpen, editAction, onClose }: { word: { it: string; fr: string }; isOpen: boolean; editAction?: (formData: FormData) => void; onClose?: () => void }) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        await editAction?.(formData);
+        onClose?.();
+    };
+
     return (
         <ModalWrapper isOpen={isOpen}>
             <div className="relative flex flex-col items-center justify-center rounded-2xl bg-white px-3 py-2">
@@ -27,7 +35,9 @@ const EditModal = ({ word, isOpen, editAction, onClose }: { word: { it: string; 
                 <button className="absolute top-2 right-2 p-1 rounded-full cursor-pointer hover:bg-[var(--color-neutral-lighter)]" onClick={() => onClose?.()}>
                     <Icon name="cross" className="w-5"/>
                 </button>
-                <form action={editAction} className="flex flex-col w-full gap-3">
+                <form onSubmit={handleSubmit} className="flex flex-col w-full gap-3">
+                    <input type="hidden" name="originalIt" value={word.it} />
+                    <input type="hidden" name="originalFr" value={word.fr} />
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="it" className="block text-sm font-medium text-gray-700">Italian</label>
                         <input type="text" name="it" defaultValue={word.it} className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
@@ -58,8 +68,9 @@ const Delete = ({ word, isOpen, deleteAction, onClose }: { word: { it: string; f
                 <div className="flex gap-3 mt-3">
                     <button 
                         className="bg-[var(--color-danger)] px-3 py-1 rounded-lg cursor-pointer text-md text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
-                        onClick={() => {
-                            deleteAction?.(word);
+                        onClick={async () => {
+                            await deleteAction?.(word);
+                            onClose?.();
                         }}
                     >
                         Confirm
@@ -77,6 +88,13 @@ const Delete = ({ word, isOpen, deleteAction, onClose }: { word: { it: string; f
 }
 
 const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?: (formData: FormData) => void; onClose?: () => void }) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        await addAction?.(formData);
+        onClose?.();
+    };
+
     return (
         <ModalWrapper isOpen={isOpen}>
             <div className="relative flex flex-col items-center justify-center rounded-2xl bg-white px-3 py-2">
@@ -84,7 +102,7 @@ const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?:
                 <button className="absolute top-2 right-2 p-1 rounded-full cursor-pointer hover:bg-[var(--color-neutral-lighter)]" onClick={() => onClose?.()}>
                     <Icon name="cross" className="w-5"/>
                 </button>
-                <form action={addAction} className="flex flex-col w-full gap-3">
+                <form onSubmit={handleSubmit} className="flex flex-col w-full gap-3">
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="it" className="block text-sm font-medium text-gray-700">Italian</label>
                         <input type="text" name="it" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
@@ -106,6 +124,7 @@ const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?:
 export const Dictionary = ({
   backgroundColor,
   words,
+  page,
   nextPage,
   prevPage,
   disableNext,
@@ -155,7 +174,7 @@ export const Dictionary = ({
                 >
                     &lt;
                 </button>
-                <span>Page 1</span>
+                <span>Page {page + 1}</span>
                 <button
                     className={`flex items-center justify-center px-3 py-1 rounded-lg text-xl font-[family-name:var(--font-header)] font-bold ${disableNext ? 'bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] bg-[var(--color-neutral-light)]'}`}
                     onClick={nextPage}

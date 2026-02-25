@@ -16,7 +16,7 @@ export const ModalWrapper = ({
   }
 
   return (
-    <div className="fixed w-full h-full bg-[var(--color-modal-bg)] flex items-center justify-center z-50" {...props}>
+    <div className="fixed top-0 left-0 w-full h-full bg-[var(--color-modal-bg)] flex items-center justify-center z-50" {...props}>
         {children}
     </div>
   );
