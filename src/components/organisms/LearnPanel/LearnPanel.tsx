@@ -5,6 +5,8 @@ import { Button } from '../../atoms/Button/Button';
 export interface LearnPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   /** What background color to use */
   backgroundColor?: string;
+  mode: string;
+  handleChangeMode?: () => void;
   boxes: Array<{
     rest: number;
     total: number;
@@ -27,6 +29,8 @@ export interface LearnPanelProps extends React.HTMLAttributes<HTMLDivElement> {
 /** Primary UI component for user interaction */
 export const LearnPanel = ({
   backgroundColor,
+  mode,
+  handleChangeMode,
   boxes,
   selectedBox,
   setSelectedBox,
@@ -43,11 +47,14 @@ export const LearnPanel = ({
       style={{ backgroundColor : backgroundColor }}
       {...props}
     >
-      <Button
-      className="absolute top-5 right-5 hover:bg-[var(--color-neutral-dark)] bg-[var(--color-neutral-light)] text-gray-900"
-      >
-        Change Languages
-      </Button>
+      <div className="absolute top-5 right-5 flex gap-2">
+        <button className={`text-white font-bold py-2 px-4 rounded-lg cursor-pointer ${mode === "it" ? "bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)]" : "bg-[var(--color-neutral-dark)] hover:bg-[var(--color-neutral-darker)]"}`} onClick={() => mode !== "it" && handleChangeMode && handleChangeMode()}>
+          FR to IT
+        </button>
+        <button className={`text-white font-bold py-2 px-4 rounded-lg cursor-pointer ${mode === "fr" ? "bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)]" : "bg-[var(--color-neutral-dark)] hover:bg-[var(--color-neutral-darker)]"}`} onClick={() => mode !== "fr" && handleChangeMode && handleChangeMode()}>
+          IT to FR
+        </button>
+      </div>
       <div className="flex flex-col items-center justify-between h-full w-1/4 text-2xl font-bold text-gray-900">
         {boxes.map((box, index) => (
           <div key={index} className={`flex flex-1 w-full flex-col items-center justify-center shadow-md border-2 cursor-pointer ${selectedBox === index ? 'border-[var(--color-primary)] bg-amber-500 hover:bg-amber-600' : 'border-gray-300 bg-white hover:bg-[var(--color-neutral-light)]'}`} onClick={() => setSelectedBox(index)}>

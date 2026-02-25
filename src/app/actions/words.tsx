@@ -29,14 +29,14 @@ export async function submitAnswer(
         if (result.rows.length > 0 && result.rows[0][mode] === answer) {
             // In case of successful answer, we should upgrade the box
             if (update) {
-                await upgradeBox(userId, mode === "it" ? answer : word, mode === "it" ? word : answer);
+                await upgradeBox(userId, mode === "it" ? answer : word, mode === "it" ? word : answer, mode);
             }
             return { success: true, correct: true };
         } else {
             // In case of wrong answer, we should downgrade the box
             const correctAnswer = result.rows.length > 0 ? result.rows[0][mode] : null;
             if (update) {
-                await downgradeBox(userId, mode === "it" ? correctAnswer : word, mode === "it" ? word : correctAnswer);
+                await downgradeBox(userId, mode === "it" ? correctAnswer : word, mode === "it" ? word : correctAnswer, mode);
             }
             return { success: true, correct: false };
         }
@@ -53,7 +53,7 @@ export async function addWord(userId: number, formData: FormData) {
     const dateNow = new Date();
 
     try {
-        await db.query(`INSERT INTO words (user_id, it, fr, box, date) VALUES ($1, $2, $3, 0, $4)`, [userId, it, fr, dateNow]);
+        await db.query(`INSERT INTO words (user_id, it, fr, box, date, box_inverse) VALUES ($1, $2, $3, 0, $4, 0)`, [userId, it, fr, dateNow]);
         return { success: true };
     } catch (error) {
         console.error("Error adding word:", error);
@@ -81,9 +81,10 @@ export async function editWord(userId: number, oldIt: string, oldFr: string, new
     }
 }
 
-export async function getWordsByBox(userId: number, box: number, limit: number = 1000) {
+export async function getWordsByBox(userId: number, box: number, mode: string, limit: number = 1000) {
+    const boxMode = mode === "it" ? 'box' : 'box_inverse';
     try {
-        const result = await db.query(`SELECT it, fr FROM words WHERE user_id = $1 AND box = $2 LIMIT $3`, [userId, box, limit]);
+        const result = await db.query(`SELECT it, fr FROM words WHERE user_id = $1 AND ${boxMode} = $2 LIMIT $3`, [userId, box, limit]);
         return { success: true, words: result.rows };
     } catch (error) {
         console.error("Error fetching words by box:", error);
@@ -107,6 +108,7 @@ export async function getWordsByOrder(userId: number, order: string, skip: numbe
 
 export async function getNextWord(userId: number, box: number, mode: string, excludeWords: string[] = []) {
     const unmode = mode === "it" ? "fr" : "it";
+    const boxMode = mode === "it" ? 'box' : 'box_inverse';
     const dateNow = new Date();
     const daysLimitMap: Record<number, number> = {
         1: 1,
@@ -121,13 +123,13 @@ export async function getNextWord(userId: number, box: number, mode: string, exc
         let result;
         if (excludeWords.length === 0) {
             result = await db.query(
-                `SELECT ${unmode} FROM words WHERE user_id = $1 AND ($3 - date >= ${daysLimit}) AND box = $2 ORDER BY RANDOM() LIMIT 1`,
+                `SELECT ${unmode} FROM words WHERE user_id = $1 AND ($3 - date >= ${daysLimit}) AND ${boxMode} = $2 ORDER BY RANDOM() LIMIT 1`,
                 [userId, box, dateNow]
             );
         }
         else {
             result = await db.query(
-                `SELECT ${unmode} FROM words WHERE user_id = $1 AND ($3 - date >= ${daysLimit}) AND box = $2 AND ${unmode} NOT IN (${excludeWords.map((_, i) => `$${i + 4}`).join(", ")}) ORDER BY RANDOM() LIMIT 1`,
+                `SELECT ${unmode} FROM words WHERE user_id = $1 AND ($3 - date >= ${daysLimit}) AND ${boxMode} = $2 AND ${unmode} NOT IN (${excludeWords.map((_, i) => `$${i + 4}`).join(", ")}) ORDER BY RANDOM() LIMIT 1`,
                 [userId, box, dateNow, ...excludeWords]
             );
         }
@@ -142,10 +144,11 @@ export async function getNextWord(userId: number, box: number, mode: string, exc
     }
 }
 
-export async function upgradeBox(userId: number, it: string, fr: string, maxBox: number = 6) {
+export async function upgradeBox(userId: number, it: string, fr: string, mode: string, maxBox: number = 6) {
     const dateNow = new Date();
+    const boxMode = mode === "it" ? 'box' : 'box_inverse';
     try {
-        await db.query(`UPDATE words SET box = box + 1, date = $4 WHERE user_id = $1 AND it = $2 AND fr = $3 AND box < $5`, [userId, it, fr, dateNow, maxBox]);
+        await db.query(`UPDATE words SET ${boxMode} = ${boxMode} + 1, date = $4 WHERE user_id = $1 AND it = $2 AND fr = $3 AND ${boxMode} < $5`, [userId, it, fr, dateNow, maxBox]);
         return { success: true };
     } catch (error) {
         console.error("Error upgrading box:", error);
@@ -153,10 +156,11 @@ export async function upgradeBox(userId: number, it: string, fr: string, maxBox:
     }
 }
 
-export async function downgradeBox(userId: number, it: string, fr: string, minBox: number = 0) {
+export async function downgradeBox(userId: number, it: string, fr: string, mode: string, minBox: number = 0) {
     const dateNow = new Date();
+    const boxMode = mode === "it" ? 'box' : 'box_inverse';
     try {
-        await db.query(`UPDATE words SET box = box - 1, date = $4 WHERE user_id = $1 AND it = $2 AND fr = $3 AND box > $5`, [userId, it, fr, dateNow, minBox]);
+        await db.query(`UPDATE words SET ${boxMode} = ${boxMode} - 1, date = $4 WHERE user_id = $1 AND it = $2 AND fr = $3 AND ${boxMode} > $5`, [userId, it, fr, dateNow, minBox]);
         return { success: true };
     } catch (error) {
         console.error("Error downgrading box:", error);
@@ -164,8 +168,9 @@ export async function downgradeBox(userId: number, it: string, fr: string, minBo
     }
 }
 
-export async function  getBoxCount(userId: number, box: number) {
+export async function  getBoxCount(userId: number, box: number, mode: string) {
     const dateNow = new Date();
+    const boxMode = mode === "it" ? 'box' : 'box_inverse';
     const daysLimitMap: Record<number, number> = {
         1: 1,
         2: 2,
@@ -176,9 +181,9 @@ export async function  getBoxCount(userId: number, box: number) {
     };
     const daysLimit = daysLimitMap[box] ?? 0;
     try {
-        const result = await db.query(`SELECT COUNT(*) as count FROM words WHERE user_id = $1 AND box = $2`, [userId, box]);
+        const result = await db.query(`SELECT COUNT(*) as count FROM words WHERE user_id = $1 AND ${boxMode} = $2`, [userId, box]);
         const total = Number(result.rows[0].count);
-        const restResult = await db.query(`SELECT COUNT(*) as count FROM words WHERE user_id = $1 AND box = $2 AND ($3 - date >= ${daysLimit})`, [userId, box, dateNow]);
+        const restResult = await db.query(`SELECT COUNT(*) as count FROM words WHERE user_id = $1 AND ${boxMode} = $2 AND ($3 - date >= ${daysLimit})`, [userId, box, dateNow]);
         const rest = Number(restResult.rows[0].count);
 
         return { success: true, rest: rest, total: total };

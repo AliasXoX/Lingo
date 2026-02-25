@@ -10,5 +10,6 @@ const pool = new Pool({
 });
 
 export const db = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   query: (text: string, params?: any[]) => pool.query(text, params),
 };

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { fn } from 'storybook/test';
 
+import React, { useState } from 'react';
 import { LearnPanel } from './LearnPanel';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
@@ -15,11 +16,15 @@ const meta = {
   tags: ['autodocs'],
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#story-args
   args: { onClick: fn() },
-  render: (args) => (
-    <div className="flex w-full h-screen px-5 py-3">
-      <LearnPanel {...args} />
-    </div>
-  ),
+  render: (args) => {
+    const [mode, setMode] = useState("it");
+
+    return (
+      <div className="flex w-full h-screen px-5 py-3">
+        <LearnPanel {...args} mode={mode} handleChangeMode={() => setMode(mode === "it" ? "fr" : "it")} />
+      </div>
+    );
+  }
 } satisfies Meta<typeof LearnPanel>;
 
 export default meta;
@@ -28,6 +33,7 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Primary: Story = {
   args: {
+    mode: "it",
     selectedBox: 0,
     setSelectedBox: fn(),
     boxes: [
@@ -47,6 +53,7 @@ export const Primary: Story = {
 
 export const WithError: Story = {
   args: {
+    mode: "it",
     selectedBox: 0,
     setSelectedBox: fn(),
     boxes: [
@@ -69,6 +76,7 @@ export const WithError: Story = {
 
 export const WithCorrectAnswer: Story = {
   args: {
+    mode: "it",
     selectedBox: 0,
     setSelectedBox: fn(),
     boxes: [
@@ -91,6 +99,7 @@ export const WithCorrectAnswer: Story = {
 
 export const WithIncorrectAnswer: Story = {
   args: {
+    mode: "it",
     selectedBox: 0,
     setSelectedBox: fn(),
     boxes: [
