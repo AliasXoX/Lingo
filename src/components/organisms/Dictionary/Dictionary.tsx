@@ -42,11 +42,11 @@ const EditModal = ({ word, isOpen, editAction, onClose }: { word: { it: string; 
                     <input type="hidden" name="originalFr" value={word.fr} />
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="it" className="block text-sm font-medium text-gray-700">Italian</label>
-                        <input type="text" name="it" defaultValue={word.it} className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
+                        <input required type="text" name="it" defaultValue={word.it} className=" capitalize border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
                     </div>
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="fr" className="block text-sm font-medium text-gray-700">French</label>
-                        <input type="text" name="fr" defaultValue={word.fr} className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
+                        <input required type="text" name="fr" defaultValue={word.fr} className=" capitalize border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
                     </div>
                     <button type="submit" className="bg-[var(--color-action-dark)] px-3 py-1 rounded-lg cursor-pointer text-md text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)] mt-2">
                         Save
@@ -107,11 +107,11 @@ const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?:
                 <form onSubmit={handleSubmit} className="flex flex-col w-full gap-3">
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="it" className="block text-sm font-medium text-gray-700">Italian</label>
-                        <input type="text" name="it" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
+                        <input required type="text" name="it" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
                     </div>
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="fr" className="block text-sm font-medium text-gray-700">French</label>
-                        <input type="text" name="fr" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
+                        <input required type="text" name="fr" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
                     </div>
                     <button type="submit" className="bg-[var(--color-action-dark)] px-3 py-1 rounded-lg cursor-pointer text-md text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)] mt-2">
                         Add
@@ -204,8 +204,8 @@ export const Dictionary = ({
             <tbody>
                 {words.map((word, index) => (
                     <tr key={index}>
-                        <td className="border-b border-gray-300 px-4 py-2">{word.it}</td>
-                        <td className="border-b border-gray-300 px-4 py-2">{word.fr}</td>
+                        <td className="border-b capitalize border-gray-300 px-4 py-2">{word.it}</td>
+                        <td className="border-b capitalize border-gray-300 px-4 py-2">{word.fr}</td>
                         <td className="border-b border-gray-300 px-4 py-2">
                             <button 
                                 className="bg-[var(--color-action-dark)] px-3 py-1 rounded-lg cursor-pointer text-sm text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"

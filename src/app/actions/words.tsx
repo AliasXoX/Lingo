@@ -21,12 +21,12 @@ export async function submitAnswer(
 ) {
     // mode "it" or "fr" : the language to translate to, the other one is the language to translate from
     const unmode = mode === "it" ? "fr" : "it";
-    const word = formData.get("translate") as string;
-    const answer = formData.get("answer") as string;
+    const word = (formData.get("translate") as string).toLowerCase();
+    const answer = (formData.get("answer") as string).toLowerCase();
 
     try {
         const result = await db.query(`SELECT ${mode} FROM words WHERE user_id = $1 AND ${unmode} = $2`, [userId, word]);
-        if (result.rows.length > 0 && result.rows[0][mode] === answer) {
+        if (result.rows.length > 0 && result.rows[0][mode].toLowerCase() === answer) {
             // In case of successful answer, we should upgrade the box
             if (update) {
                 await upgradeBox(userId, mode === "it" ? answer : word, mode === "it" ? word : answer, mode);
@@ -47,8 +47,8 @@ export async function submitAnswer(
 }
 
 export async function addWord(userId: number, formData: FormData) {
-    const it = formData.get("it") as string;
-    const fr = formData.get("fr") as string;
+    const it = (formData.get("it") as string).toLowerCase();
+    const fr = (formData.get("fr") as string).toLowerCase();
 
     const dateNow = new Date();
 
@@ -62,6 +62,8 @@ export async function addWord(userId: number, formData: FormData) {
 }
 
 export async function deleteWord(userId: number, it: string, fr: string) {
+    it = it.toLowerCase();
+    fr = fr.toLowerCase();
     try {
         await db.query(`DELETE FROM words WHERE user_id = $1 AND it = $2 AND fr = $3`, [userId, it, fr]);
         return { success: true };
@@ -72,6 +74,10 @@ export async function deleteWord(userId: number, it: string, fr: string) {
 }
 
 export async function editWord(userId: number, oldIt: string, oldFr: string, newIt: string, newFr: string) {
+    oldIt = oldIt.toLowerCase();
+    oldFr = oldFr.toLowerCase();
+    newIt = newIt.toLowerCase();
+    newFr = newFr.toLowerCase();
     try {
         await db.query(`UPDATE words SET it = $4, fr = $5 WHERE user_id = $1 AND it = $2 AND fr = $3`, [userId, oldIt, oldFr, newIt, newFr]);
         return { success: true };
@@ -145,6 +151,9 @@ export async function getNextWord(userId: number, box: number, mode: string, exc
 }
 
 export async function upgradeBox(userId: number, it: string, fr: string, mode: string, maxBox: number = 6) {
+    it = it.toLowerCase();
+    fr = fr.toLowerCase();
+    
     const dateNow = new Date();
     const boxMode = mode === "it" ? 'box' : 'box_inverse';
     try {
@@ -157,6 +166,9 @@ export async function upgradeBox(userId: number, it: string, fr: string, mode: s
 }
 
 export async function downgradeBox(userId: number, it: string, fr: string, mode: string, minBox: number = 0) {
+    it = it.toLowerCase();
+    fr = fr.toLowerCase();
+    
     const dateNow = new Date();
     const boxMode = mode === "it" ? 'box' : 'box_inverse';
     try {
