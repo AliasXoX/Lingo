@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { ModalWrapper } from '@/components/molecules/ModalWrapper/ModalWrapper';
 import { Icon } from '@/components/atoms/Icon/Icon';
+import Toggle from 'react-styled-toggle';
 
 export interface DictionaryProps extends React.HTMLAttributes<HTMLDivElement> {
     /** What background color to use */
@@ -18,6 +19,7 @@ export interface DictionaryProps extends React.HTMLAttributes<HTMLDivElement> {
     editAction?: (formData: FormData) => void;
     deleteAction?: (word: { it: string; fr: string }) => void;
     addAction?: (formData: FormData) => void;
+    onChangeOrder?: () => void;
 }
 
 const EditModal = ({ word, isOpen, editAction, onClose }: { word: { it: string; fr: string }; isOpen: boolean; editAction?: (formData: FormData) => void; onClose?: () => void }) => {
@@ -132,6 +134,7 @@ export const Dictionary = ({
   editAction,
   deleteAction,
   addAction,
+  onChangeOrder,
   className = '',
   ...props
 }: DictionaryProps) => {
@@ -167,6 +170,12 @@ export const Dictionary = ({
                + Add Word
             </button>
             <div className="flex items-center gap-5 ml-5">
+                <div className="flex items-center gap-1">
+                    <span> Order by French </span>
+                    <Toggle
+                        onChange ={onChangeOrder}
+                    />
+                </div>
                 <button 
                     className={`flex items-center justify-center px-3 py-1 rounded-lg text-xl font-[family-name:var(--font-header)] font-bold ${disablePrev ? 'bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] bg-[var(--color-neutral-light)]'}`}
                     onClick={prevPage}

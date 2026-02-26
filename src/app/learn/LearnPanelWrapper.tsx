@@ -7,7 +7,7 @@ import { LearnPanel } from '@/components/organisms/LearnPanel/LearnPanel';
 import { submitAnswer, getNextWord, getBoxCount } from '@/app/actions/words';
 
 interface LearnPanelWrapperProps {
-  mode: string;
+  initMode: string;
   userId: number;
   initBoxes: Array<{
     rest: number;
@@ -16,17 +16,29 @@ interface LearnPanelWrapperProps {
   initWord: string;
 }
 
-export function LearnPanelWrapper({ mode, userId, initBoxes, initWord }: LearnPanelWrapperProps) {
+export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: LearnPanelWrapperProps) {
   const [selectedBox, setSelectedBox] = useState(0);
   const [boxes, setBoxes] = useState(initBoxes);
   const [inputWord, setInputWord] = useState(initWord);
   const [update, setUpdate] = useState(true); // update box after submit if true
+  const [mode, setMode] = useState(initMode);
 
+  async function handleChangeMode() {
+    const newMode = mode === "it" ? "fr" : "it";
+    setMode(newMode);
+    setSelectedBox(0);
+    await updateBoxes(newMode);
+    getNextWord(userId, 0, newMode, []).then(result => {
+      if (result.success) {
+        setInputWord(result.word);
+      }
+    });
+  }
 
-  async function updateBoxes() {
+  async function updateBoxes(mode: string) {
     const boxesCountResults = []
     for (let i = 0; i < 8; i++) {
-      boxesCountResults.push(await getBoxCount(userId, i));
+      boxesCountResults.push(await getBoxCount(userId, i, mode));
     }
     const initBoxes = [
       { rest: boxesCountResults[0].success && boxesCountResults[0].rest ? boxesCountResults[0].rest : 0, total: boxesCountResults[0].success && boxesCountResults[0].total ? boxesCountResults[0].total : 0, selected: true },
@@ -57,7 +69,7 @@ export function LearnPanelWrapper({ mode, userId, initBoxes, initWord }: LearnPa
       else {
         setUpdate(false);
       }
-      await updateBoxes();
+      await updateBoxes(mode);
     }
     return result;
   }
@@ -75,6 +87,8 @@ export function LearnPanelWrapper({ mode, userId, initBoxes, initWord }: LearnPa
   return (
     <LearnPanel
       boxes={boxes}
+      mode={mode}
+      handleChangeMode={handleChangeMode}
       selectedBox={selectedBox}
       setSelectedBox={handleChangeBox}
       inputWord={inputWord}

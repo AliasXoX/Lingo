@@ -7,7 +7,7 @@ import { getWordsByOrder, addWord, deleteWord, editWord } from '../actions/words
 
 interface DictionaryWrapperProps {
     userId: number;
-    order: string;
+    initOrder: string;
     initWords?: Array<{
         it: string;
         fr: string;
@@ -17,13 +17,29 @@ interface DictionaryWrapperProps {
 
 export function DictionaryWrapper({
     userId,
-    order,
+    initOrder,
     initWords,
     wordsCount
 }: DictionaryWrapperProps) {
 
     const [words, setWords] = useState(initWords || []);
     const [page, setPage] = useState(0);
+
+    const [order, setOrder] = useState(initOrder);
+
+    const handleChangeOrder = () => {
+        const newOrder = order === 'it' ? 'fr' : 'it';
+        setOrder(newOrder);
+        // When changing the order, we should reset to the first page
+        setPage(0);
+        getWordsByOrder(userId, newOrder, 0, 100).then(result => {
+            if (result.success) {
+                setWords(result.words as Array<{ it: string; fr: string }>);
+            }
+        });
+    }
+
+
 
     async function submitAddAction (
         prevState: { success: boolean; error?: string } | null,
@@ -106,6 +122,7 @@ export function DictionaryWrapper({
             editAction={editFormAction}
             deleteAction={handleDeleteAction}
             addAction={addFormAction}
+            onChangeOrder={handleChangeOrder}
         />
     </main>
     );

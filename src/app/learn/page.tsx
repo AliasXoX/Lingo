@@ -11,7 +11,7 @@ export default async function Learn() {
 
   const boxesCountResults = []
   for (let i = 0; i < 8; i++) {
-    boxesCountResults.push(await getBoxCount(userId, i));
+    boxesCountResults.push(await getBoxCount(userId, i, mode));
   }
   const initBoxes = [
     { rest: boxesCountResults[0].success && boxesCountResults[0].rest ? boxesCountResults[0].rest : 0, total: boxesCountResults[0].success && boxesCountResults[0].total ? boxesCountResults[0].total : 0, selected: true },
@@ -31,7 +31,7 @@ export default async function Learn() {
     <main className="flex-1 flex flex-col items-center justify-between px-56 pb-3">
         <div className="flex flex-1 w-full bg-[var(--color-neutral-lightest)]">
           <LearnPanelWrapper
-            mode={mode}
+            initMode={mode}
             userId={userId}
             initBoxes={initBoxes}
             initWord={initWordResult.success ? initWordResult.word : ""}
