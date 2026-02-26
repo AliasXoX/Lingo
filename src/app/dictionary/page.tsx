@@ -16,7 +16,7 @@ export default async function DictionaryPage() {
     <main className="flex-1 flex-col items-center justify-between px-56">
       <DictionaryWrapper 
         userId={userId}
-        order={order}
+        initOrder={order}
         initWords={initWordsResult.success ? initWordsResult.words : undefined}
         wordsCount={wordsCountResult.success ? (wordsCountResult.total ?? 0) : 0}
       />
