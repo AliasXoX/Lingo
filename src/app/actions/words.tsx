@@ -53,7 +53,7 @@ export async function addWord(userId: number, formData: FormData) {
     const dateNow = new Date();
 
     try {
-        await db.query(`INSERT INTO words (user_id, it, fr, box, date, box_inverse) VALUES ($1, $2, $3, 0, $4, 0)`, [userId, it, fr, dateNow]);
+        await db.query(`INSERT INTO words (user_id, it, fr, box, date, box_inverse) VALUES ($1, $2, $3, 0, $4, 0) ON CONFLICT (user_id, it, fr) DO NOTHING`, [userId, it, fr, dateNow]);
         return { success: true };
     } catch (error) {
         console.error("Error adding word:", error);

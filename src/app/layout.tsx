@@ -40,6 +40,7 @@ export default async function RootLayout({
             { label: "Contact", href: "/contact" },
             { label: "Learn", href: "/learn" },
             { label: "Dictionary", href: "/dictionary" },
+            { label: "Verbs", href: "/verbs" },
           ]
             : [
             { label: "Home", href: "/" },

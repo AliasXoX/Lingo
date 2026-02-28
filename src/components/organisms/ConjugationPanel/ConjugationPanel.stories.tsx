@@ -130,3 +130,31 @@ export const WithIncorrectAnswer: Story = {
     }
   },
 };
+
+export const Test: Story = {
+  args: {
+    selectedBox: 0,
+    setSelectedBox: fn(),
+    boxes: [
+        { rest: 3, total: 10 },
+        { rest: 5, total: 10 },
+        { rest: 2, total: 10 },
+        { rest: 7, total: 10 },
+        { rest: 1, total: 10 },
+        { rest: 0, total: 10 },
+        { rest: 4, total: 10 },
+    ],
+    inputVerb: {
+        infinitive: "Comprare",
+        tense: "presente",
+        mode: "indicativo"
+    },
+    formAction: (formData: FormData) => {
+      console.log(formData);
+    },
+    state: {
+      success: true,
+      correct: false,
+    }
+  },
+};

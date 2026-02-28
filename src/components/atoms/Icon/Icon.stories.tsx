@@ -28,3 +28,36 @@ export const Cross: Story = {
     </div>
   )
 };
+
+export const Delete: Story = {
+  args: {
+    name: "delete"
+  },
+  render: (args) => (
+    <div className="w-10">
+      <Icon {...args} />
+    </div>
+  )
+};
+
+export const Edit: Story = {
+  args: {
+    name: "edit"
+  },
+  render: (args) => (
+    <div className="w-10">
+      <Icon {...args} />
+    </div>
+  )
+};
+
+export const Dropdown: Story = {
+  args: {
+    name: "dropdown"
+  },
+  render: (args) => (
+    <div className="w-10">
+      <Icon {...args} />
+    </div>
+  )
+};
