@@ -4,7 +4,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import { ConjugationPanel } from '@/components/organisms/ConjugationPanel/ConjugationPanel';
-import { getBoxCount, getNextVerb, submitAnswer } from '../actions/verbs';
+import { getBoxCount, getNextVerb, submitAnswer, getVerbTense, downgradeBox } from '../actions/verbs';
 import { Mode, Tense } from '@/lib/type';
 
 interface ConjugationPanelWrapperProps {
@@ -74,6 +74,29 @@ export function ConjugationPanelWrapper({ userId, initBoxes, initVerb }: Conjuga
     }
   }
 
+  async function handleSkip() {
+    if (!inputVerb) {
+      return;
+    }
+    const result = await getVerbTense(userId, inputVerb.infinitive, inputVerb.mode, inputVerb.tense);
+    if (result.success) {
+      return result.verb.conjugation as string[];
+    }
+    return;
+  }
+
+  async function handleNext() {
+    if (!inputVerb) {
+      return;
+    }
+    const nextVerb = await getNextVerb(userId, selectedBox);
+    if (nextVerb.success) {
+      setInputVerb(nextVerb.verb as { infinitive: string; mode: Mode; tense: Tense });
+      setUpdate(true);
+    }
+  }
+
+
   return (
     <ConjugationPanel
       boxes={boxes}
@@ -82,6 +105,8 @@ export function ConjugationPanelWrapper({ userId, initBoxes, initVerb }: Conjuga
       inputVerb={inputVerb}
       formAction={formAction}
       state={state}
+      handleSkip={handleSkip}
+      handleNext={handleNext}
     />
   );
 }

@@ -11,7 +11,9 @@
 
   --color-modal-bg: rgba(0, 0, 0, 0.5);
 
+  --color-danger-light: #ff1a1a;
   --color-danger: #e60000;
+  --color-danger-dark: #b30000;
 
   --color-action-lighter: #849ee1;
   --color-action-light: #5a7ed8;

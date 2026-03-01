@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tense, Mode, modeToPronouns } from '../../../lib/type';
 
 export interface ConjugationPanelProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -26,6 +26,8 @@ export interface ConjugationPanelProps extends React.HTMLAttributes<HTMLDivEleme
       error: string;
       correct?: undefined;
   } | null;
+  handleSkip?: () => Promise<string[] | void>;
+  handleNext?: () => void;
 }
 
 /** Primary UI component for user interaction */
@@ -37,12 +39,16 @@ export const ConjugationPanel = ({
   inputVerb,
   formAction,
   state,
+  handleSkip,
+  handleNext,
   className = '',
   ...props
 }: ConjugationPanelProps) => {
 
 
   const pronouns = inputVerb ? modeToPronouns(inputVerb.mode) : [];
+
+  const [skip, setSkip] = useState<string[] | null>(null);
 
   return (
     <div
@@ -53,6 +59,22 @@ export const ConjugationPanel = ({
       {inputVerb &&<div className="absolute top-5 left-1/4 flex flex-col gap-2 ml-5">
         <span className="text-2xl capitalize">Verb: {inputVerb?.infinitive}</span>
         <span className="text-lg capitalize">Tense: {inputVerb?.tense} | {inputVerb?.mode}</span>
+        {!skip && (
+          <button className="bg-[var(--color-danger-light)] hover:bg-[var(--color-danger-dark)] font-bold py-1 px-3 rounded-lg cursor-pointer" onClick={async () => {
+            const skipped = await handleSkip?.();
+            setSkip(skipped || null);
+          }}>
+            <span className="text-sm text-[var(--color-neutral-lightest)]">Skip</span>
+          </button>
+        )}
+        {skip && (
+          <button className="bg-gray-300 hover:bg-gray-400 font-bold py-1 px-3 rounded-lg cursor-pointer" onClick={() => {
+            handleNext?.();
+            setSkip(null);
+          }}>
+            <span className="text-sm text-gray-500">Next</span>
+          </button>
+        )}
       </div>}
       <div className="flex flex-col items-center justify-between h-full w-1/4 text-2xl font-bold text-gray-900">
         {boxes.map((box, index) => (
@@ -67,13 +89,18 @@ export const ConjugationPanel = ({
             {pronouns.map((pronoun, index) => (
                 <label key={`pronoun-${index}`} htmlFor={`conjugation-${index}`} className="capitalize flex items-center justify-end text-nowrap">{pronoun}</label>
             ))}
-            {pronouns.map((_, index) => (
+            {!skip && pronouns.map((_, index) => (
                 <input key={`input-${index}`} name={`conjugation-${index}`} type="text" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" required />
+            ))}
+            {skip && pronouns.map((_, index) => (
+                <input key={`input-${index}`} name={`conjugation-${index}`} type="text" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full bg-gray-200" value={skip[index]} disabled />
             ))}
             
         </div>
         <button
           className="bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)] text-white font-bold py-2 px-4 rounded-lg cursor-pointer"
+          type="submit"
+          disabled={skip !== null}
         >
           Submit Answer
         </button>

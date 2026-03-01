@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
 import { fn } from 'storybook/test';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ConjugationPanel } from './ConjugationPanel';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
@@ -50,6 +50,7 @@ export const Primary: Story = {
     },
     formAction: fn(),
     state: null,
+    handleSkip: async () => ["compro", "comperi", "compre", "compremo", "comprete", "compreremo", "compreranno"]
   },
 };
 
@@ -75,7 +76,8 @@ export const WithError: Story = {
     state: {
       success: false,
       error: "Incorrect answer. Try again!"
-    }
+    },
+    handleSkip: async () => ["compro", "comperi", "compre", "compremo", "comprete", "compreremo", "compreranno"]
   },
 };
 
@@ -101,7 +103,8 @@ export const WithCorrectAnswer: Story = {
     state: {
       success: true,
       correct: true,
-    }
+    },
+    handleSkip: async () => ["compro", "comperi", "compre", "compremo", "comprete", "compreremo", "compreranno"]
   },
 };
 
@@ -127,34 +130,7 @@ export const WithIncorrectAnswer: Story = {
     state: {
       success: true,
       correct: false,
-    }
-  },
-};
-
-export const Test: Story = {
-  args: {
-    selectedBox: 0,
-    setSelectedBox: fn(),
-    boxes: [
-        { rest: 3, total: 10 },
-        { rest: 5, total: 10 },
-        { rest: 2, total: 10 },
-        { rest: 7, total: 10 },
-        { rest: 1, total: 10 },
-        { rest: 0, total: 10 },
-        { rest: 4, total: 10 },
-    ],
-    inputVerb: {
-        infinitive: "Comprare",
-        tense: "presente",
-        mode: "indicativo"
     },
-    formAction: (formData: FormData) => {
-      console.log(formData);
-    },
-    state: {
-      success: true,
-      correct: false,
-    }
+    handleSkip: async () => ["compro", "comperi", "compre", "compremo", "comprete", "compreremo", "compreranno"]
   },
 };
