@@ -1,8 +1,9 @@
-
+'use client';
 import React, { useState } from 'react';
 import { ModalWrapper } from '@/components/molecules/ModalWrapper/ModalWrapper';
 import { Icon } from '@/components/atoms/Icon/Icon';
 import Toggle from 'react-styled-toggle';
+import { useMediaQuery } from 'react-responsive';
 
 export interface DictionaryProps extends React.HTMLAttributes<HTMLDivElement> {
     /** What background color to use */
@@ -146,6 +147,10 @@ export const Dictionary = ({
   const [editWord, setEditWord] = useState<{ it: string; fr: string }>({ it: '', fr: '' });
   const [deleteWord, setDeleteWord] = useState<{ it: string; fr: string }>({ it: '', fr: '' });
 
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+
+  const [currentMenuOpened, setCurrentMenuOpened] = useState<number | null>(null); // For mobile dropdown menu : stores the index of the word for which the menu is opened
+
   function handleEdit(word: { it: string; fr: string }) {
     setEditWord(word);
     setIsEditModalOpen(true);
@@ -164,62 +169,95 @@ export const Dictionary = ({
     >
         <div className="flex justify-between items-center">
             <button 
-                className="bg-[var(--color-action-dark)] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
+                className="bg-[var(--color-action-dark)] text-nowrap px-1 md:px-5 py-1 rounded-lg cursor-pointer text-sm md:text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
                 onClick={() => setIsAddModalOpen(true)}
             >
-               + Add Word
+               + Add{isMobile ? '' : ' Word'}
             </button>
-            <div className="flex items-center gap-5 ml-5">
+            <div className="flex items-center">
                 <div className="flex items-center gap-1">
-                    <span> Order by French </span>
+                    <span className="text-sm md:text-base"> Order by French </span>
                     <Toggle
                         onChange ={onChangeOrder}
                     />
                 </div>
-                <button 
-                    className={`flex items-center justify-center px-3 py-1 rounded-lg text-xl font-[family-name:var(--font-header)] font-bold ${disablePrev ? 'bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] bg-[var(--color-neutral-light)]'}`}
-                    onClick={prevPage}
-                    disabled={disablePrev}
-                >
-                    &lt;
-                </button>
-                <span>Page {page + 1}</span>
-                <button
-                    className={`flex items-center justify-center px-3 py-1 rounded-lg text-xl font-[family-name:var(--font-header)] font-bold ${disableNext ? 'bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] bg-[var(--color-neutral-light)]'}`}
-                    onClick={nextPage}
-                    disabled={disableNext}
-                >
-                    &gt;
-                </button>
+                <div className="flex items-center gap-2 ml-5">
+                    <button 
+                        className={`flex items-center justify-center md:px-3 md:py-1 rounded-lg text-sm md:text-xl font-[family-name:var(--font-header)] font-bold ${disablePrev ? 'md:bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] md:bg-[var(--color-neutral-light)]'}`}
+                        onClick={prevPage}
+                        disabled={disablePrev}
+                    >
+                        &lt;
+                    </button>
+                    <span className="text-sm md:text-base text-nowrap">Page {page + 1}</span>
+                    <button
+                        className={`flex items-center justify-center md:px-3 md:py-1 rounded-lg text-sm md:text-xl font-[family-name:var(--font-header)] font-bold ${disableNext ? 'md:bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] md:bg-[var(--color-neutral-light)]'}`}
+                        onClick={nextPage}
+                        disabled={disableNext}
+                    >
+                        &gt;
+                    </button>
+                </div>
             </div>
         </div>
         <table className="w-full mt-5 text-left">
             <thead>
                 <tr>
-                    <th className="border-b-2 border-gray-300 px-4 py-2">Italian</th>
-                    <th className="border-b-2 border-gray-300 px-4 py-2">French</th>
-                    <th className="border-b-2 border-gray-300 px-4 py-2">Action</th>
+                    <th className="border-b-2 border-gray-300 md:px-4 md:py-2">Italian</th>
+                    <th className="border-b-2 border-gray-300 md:px-4 md:py-2">French</th>
+                    <th className="border-b-2 border-gray-300 md:px-4 md:py-2">{isMobile ? '' : 'Actions'}</th>
                 </tr>
             </thead>
             <tbody>
                 {words.map((word, index) => (
                     <tr key={index}>
-                        <td className="border-b capitalize border-gray-300 px-4 py-2">{word.it}</td>
-                        <td className="border-b capitalize border-gray-300 px-4 py-2">{word.fr}</td>
-                        <td className="border-b border-gray-300 px-4 py-2">
-                            <button 
-                                className="bg-[var(--color-action-dark)] px-3 py-1 rounded-lg cursor-pointer text-sm text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
-                                onClick={() => handleEdit(word)}
-                            >
-                                Edit
+                        <td className="border-b capitalize border-gray-300 px-2 md:px-4 md:py-2">{word.it}</td>
+                        <td className="border-b capitalize border-gray-300 px-2 md:px-4 md:py-2">{word.fr}</td>
+                        {!isMobile && (
+                            <td className="border-b border-gray-300 px-4 py-2">
+                                <button 
+                                    className="bg-[var(--color-action-light)] px-3 py-1 rounded-lg cursor-pointer text-sm text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
+                                    onClick={() => handleEdit(word)}
+                                >
+                                    Edit
+                                </button>
+                                <button 
+                                    className="bg-[var(--color-danger-light)] px-3 py-1 rounded-lg cursor-pointer text-sm text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)] ml-2"
+                                    onClick={() => handleDelete(word)}
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        )}
+                        {isMobile && (
+                           <td className="relative border-b border-gray-300 px-2">
+                            <button>
+                                <Icon name="dots" className="w-5" onClick={() => setCurrentMenuOpened(prev => prev === index ? null : index)} />
                             </button>
-                            <button 
-                                className="bg-[var(--color-danger)] px-3 py-1 rounded-lg cursor-pointer text-sm text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)] ml-2"
-                                onClick={() => handleDelete(word)}
-                            >
-                                Delete
-                            </button>
+                            {currentMenuOpened === index && (
+                                <div className="absolute right-2 top-5 bg-white border-2 border-gray-300 rounded-lg p-1 flex flex-col gap-2 z-10">
+                                    <button 
+                                        className="bg-[var(--color-action-light)] px-3 py-1 rounded-lg cursor-pointer text-sm text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
+                                        onClick={() => {
+                                            handleEdit(word);
+                                            setCurrentMenuOpened(null);
+                                        }}
+                                    >
+                                        Edit
+                                    </button>
+                                    <button 
+                                        className="bg-[var(--color-danger-light)] px-3 py-1 rounded-lg cursor-pointer text-sm text-white font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
+                                        onClick={() => {
+                                            handleDelete(word);
+                                            setCurrentMenuOpened(null);
+                                        }}
+                                    >
+                                        Delete
+                                    </button>
+                                </div>
+                            )}
                         </td>
+                        )}
                     </tr>
                 ))}
             </tbody>
