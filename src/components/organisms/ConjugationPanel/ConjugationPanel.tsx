@@ -57,35 +57,35 @@ export const ConjugationPanel = ({
       {...props}
     >
       {inputVerb &&<div className="absolute top-5 left-1/4 flex flex-col gap-2 ml-5">
-        <span className="text-2xl capitalize">Verb: {inputVerb?.infinitive}</span>
-        <span className="text-lg capitalize">Tense: {inputVerb?.tense} | {inputVerb?.mode}</span>
+        <span className="md:text-2xl capitalize">Verb: {inputVerb?.infinitive}</span>
+        <span className="md:text-lg capitalize">Tense: {inputVerb?.tense} | {inputVerb?.mode}</span>
         {!skip && (
-          <button className="bg-[var(--color-danger-light)] hover:bg-[var(--color-danger-dark)] font-bold py-1 px-3 rounded-lg cursor-pointer" onClick={async () => {
+          <button className="flex w-fit items-center justify-center md:w-auto bg-[var(--color-danger-light)] hover:bg-[var(--color-danger-dark)] font-bold py-1 px-3 rounded-lg cursor-pointer" onClick={async () => {
             const skipped = await handleSkip?.();
             setSkip(skipped || null);
           }}>
-            <span className="text-sm text-[var(--color-neutral-lightest)]">Skip</span>
+            <span className="text-xs md:text-sm text-[var(--color-neutral-lightest)]">Skip</span>
           </button>
         )}
         {skip && (
-          <button className="bg-gray-300 hover:bg-gray-400 font-bold py-1 px-3 rounded-lg cursor-pointer" onClick={() => {
+          <button className="flex w-fit items-center justify-center md:w-auto bg-gray-300 hover:bg-gray-400 font-bold py-1 px-3 rounded-lg cursor-pointer" onClick={() => {
             handleNext?.();
             setSkip(null);
           }}>
-            <span className="text-sm text-gray-500">Next</span>
+            <span className="text-xs md:text-sm text-gray-500">Next</span>
           </button>
         )}
       </div>}
-      <div className="flex flex-col items-center justify-between h-full w-1/4 text-2xl font-bold text-gray-900">
+      <div className="flex flex-col items-center justify-between h-full w-1/4 md:text-2xl font-bold text-gray-900">
         {boxes.map((box, index) => (
           <div key={index} className={`flex flex-1 w-full flex-col items-center justify-center shadow-md border-2 cursor-pointer ${selectedBox === index ? 'border-[var(--color-primary)] bg-amber-500 hover:bg-amber-600' : 'border-gray-300 bg-white hover:bg-[var(--color-neutral-light)]'}`} onClick={() => setSelectedBox(index)}>
-            <span className="text-5xl font-bold">{`Box ${index + 1}`}</span>
+            <span className="md:text-5xl font-bold">{`Box ${index + 1}`}</span>
             <span>{`${box.rest} / ${box.total}`}</span>
           </div>
         ))}
       </div>
-      {inputVerb && <form action={formAction} className="flex-1 flex flex-col items-center justify-center gap-5 text-2xl">
-        <div className="grid grid-flow-col grid-rows-6 gap-10 w-1/2 px-5">
+      {inputVerb && <form action={formAction} className="flex-1 flex flex-col items-center justify-center gap-5 text-center text-sm md:text-2xl mt-10">
+        <div className="grid grid-flow-col grid-rows-6 gap-10 md:w-1/2 md:px-5 px-1">
             {pronouns.map((pronoun, index) => (
                 <label key={`pronoun-${index}`} htmlFor={`conjugation-${index}`} className="capitalize flex items-center justify-end text-nowrap">{pronoun}</label>
             ))}
@@ -109,7 +109,7 @@ export const ConjugationPanel = ({
         {state?.success && state.correct && <span className="text-green-500">Correct!</span>}
         {state?.success && state.correct === false && <span className="text-red-500">Incorrect!</span>}
       </form>}
-      {!inputVerb && <span className="flex-1 flex items-center justify-center text-2xl font-bold text-gray-900">No verbs to conjugate in this box. Please select another box.</span>}
+      {!inputVerb && <span className="flex-1 flex items-center justify-center text-center px-2 md:text-2xl font-bold text-gray-900">No verbs to conjugate in this box. Please select another box.</span>}
     </div>
   );
 };
