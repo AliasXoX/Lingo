@@ -1,25 +1,24 @@
+'use server';
 import bcrypt from "bcrypt"
 import { db } from "@/lib/db"
 import { createSession, deleteSession } from "@/lib/session"
 import { redirect } from "next/navigation";
 
-export async function register(formData: FormData) {
-    'use server';
+export async function register(prevState: { success: boolean; error: string; } | null, formData: FormData) {
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         await db.query("INSERT INTO users (username, password) VALUES ($1, $2)", [username, hashedPassword]);
-        return { success: true };
+        return { success: true, error: ""};
     } catch (error) {
         console.error("Error registering user:", error);
         return { success: false, error: "Failed to register user" };
     }
 }
 
-export async function login(formData: FormData) {
-    'use server';
+export async function login(prevData: { success: boolean; error: string; } | null, formData: FormData) {
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
 
@@ -45,7 +44,6 @@ export async function login(formData: FormData) {
 }
 
 export async function logout() {
-    'use server';
     await deleteSession();
     redirect('/');
 }
