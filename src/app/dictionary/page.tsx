@@ -13,7 +13,7 @@ export default async function DictionaryPage() {
   const wordsCountResult = await getTotalWordsCount(userId);
 
   return (
-    <main className="flex-1 flex-col items-center justify-between px-56">
+    <main className="flex-1 flex-col items-center justify-between md:px-56">
       <DictionaryWrapper 
         userId={userId}
         initOrder={order}

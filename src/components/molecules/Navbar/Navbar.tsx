@@ -72,6 +72,7 @@ const PhoneNavbar = ({
                         <Link
                             key={item.href}
                             href={item.href}
+                            onClick={() => setIsMenuOpen(false)}
                             className="flex w-full py-3 text-2xl text-center font-[family-name:var(--font-header)] font-bold hover:bg-gray-200 border-b border-gray-300"
                         >
                             {item.label}
