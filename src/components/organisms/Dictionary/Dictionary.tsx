@@ -172,7 +172,7 @@ export const Dictionary = ({
                 className="bg-[var(--color-action-dark)] text-nowrap px-1 md:px-5 py-1 rounded-lg cursor-pointer text-sm md:text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
                 onClick={() => setIsAddModalOpen(true)}
             >
-               + Add
+               + Add{isMobile ? '' : ' Word'}
             </button>
             <div className="flex items-center">
                 <div className="flex items-center gap-1">

@@ -4,6 +4,7 @@ import { ModalWrapper } from '@/components/molecules/ModalWrapper/ModalWrapper';
 import { Icon } from '@/components/atoms/Icon/Icon';
 import { Verb, ConjugatedVerb, modeToPronouns, Mode, Tense } from '../../../lib/type';
 import { DropdownWrapper } from '@/components/molecules/DropdownWrapper/DropdownWrapper';
+import { useMediaQuery } from 'react-responsive';
 
 export interface VerbDictionaryProps extends React.HTMLAttributes<HTMLDivElement> {
     /** What background color to use */
@@ -191,6 +192,8 @@ export const VerbDictionary = ({
 
   const modes = ['indicativo', 'condizionale', 'congiuntivo', 'imperativo', 'gerundio', 'participio']
 
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -216,23 +219,23 @@ export const VerbDictionary = ({
     >
         <div className="flex justify-between items-center">
             <button 
-                className="bg-[var(--color-action-dark)] px-5 py-1 rounded-lg cursor-pointer text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
+                className="bg-[var(--color-action-dark)] px-1 md:px-5 py-1 rounded-lg cursor-pointer text-sm md:text-xl text-white text-center font-[family-name:var(--font-header)] font-bold hover:bg-[var(--color-action-darker)]"
                 onClick={() => setIsAddModalOpen(true)}
             >
-               + Add Verb
+               + Add{isMobile ? '' : ' Verb'}
             </button>
             <div className="flex items-center gap-5 ml-5">
                 <span onClick={handleTrain} className="cursor-pointer hover:underline font-[family-name:var(--font-header)] text-xl font-bold">Train</span>
                 <button 
-                    className={`flex items-center justify-center px-3 py-1 rounded-lg text-xl font-[family-name:var(--font-header)] font-bold ${disablePrev ? 'bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] bg-[var(--color-neutral-light)]'}`}
+                    className={`flex items-center justify-center md:px-3 md:py-1 rounded-lg text-sm md:text-xl font-[family-name:var(--font-header)] font-bold ${disablePrev ? 'md:bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] md:bg-[var(--color-neutral-light)]'}`}
                     onClick={prevPage}
                     disabled={disablePrev}
                 >
                     &lt;
                 </button>
-                <span>Page {page + 1}</span>
+                <span className="text-sm md:text-base text-nowrap">Page {page + 1}</span>
                 <button
-                    className={`flex items-center justify-center px-3 py-1 rounded-lg text-xl font-[family-name:var(--font-header)] font-bold ${disableNext ? 'bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] bg-[var(--color-neutral-light)]'}`}
+                    className={`flex items-center justify-center md:px-3 md:py-1 rounded-lg text-sm md:text-xl font-[family-name:var(--font-header)] font-bold ${disableNext ? 'md:bg-[var(--color-neutral-lighter)] text-[var(--color-neutral-dark)]' : 'cursor-pointer hover:bg-[var(--color-neutral-lighter)] md:bg-[var(--color-neutral-light)]'}`}
                     onClick={nextPage}
                     disabled={disableNext}
                 >
