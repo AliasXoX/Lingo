@@ -4,7 +4,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import { ConjugationPanel } from '@/components/organisms/ConjugationPanel/ConjugationPanel';
-import { getBoxCount, getNextVerb, submitAnswer, getVerbTense, downgradeBox } from '../actions/verbs';
+import { getBoxCount, getNextVerb, submitAnswer, getVerbTense } from '../actions/verbs';
 import { Mode, Tense } from '@/lib/type';
 
 interface ConjugationPanelWrapperProps {
@@ -21,6 +21,15 @@ export function ConjugationPanelWrapper({ userId, initBoxes, initVerb }: Conjuga
   const [boxes, setBoxes] = useState(initBoxes);
   const [inputVerb, setInputVerb] = useState(initVerb);
   const [update, setUpdate] = useState(true); // update box after submit if true
+  const [visibleState, setVisibleState] = useState<{
+    success: boolean;
+    correct: boolean;
+    error?: undefined;
+  } | {
+      success: boolean;
+      error: string;
+      correct?: undefined;
+  } | null>(null);
 
   async function updateBoxes() {
     const boxesCountResults = []
@@ -47,6 +56,7 @@ export function ConjugationPanelWrapper({ userId, initBoxes, initVerb }: Conjuga
       return { success: false, error: "No verb to conjugate" };
     }
     const result = await submitAnswer(userId, inputVerb.infinitive, inputVerb.mode, inputVerb.tense, update, null, formData);
+    setVisibleState(result);
     if (result.success) {
       // After submitting the answer, we should get the next word if answer is correct
       if (result.correct) {
@@ -64,7 +74,7 @@ export function ConjugationPanelWrapper({ userId, initBoxes, initVerb }: Conjuga
     return result;
   }
   
-  const [state, formAction] = useFormState(submitAction, null);
+  const [, formAction] = useFormState(submitAction, null);
   
   async function handleChangeBox(newBox: number) {
     setSelectedBox(newBox);
@@ -94,6 +104,7 @@ export function ConjugationPanelWrapper({ userId, initBoxes, initVerb }: Conjuga
       setInputVerb(nextVerb.verb as { infinitive: string; mode: Mode; tense: Tense });
       setUpdate(true);
     }
+    setVisibleState(null);
   }
 
 
@@ -104,7 +115,7 @@ export function ConjugationPanelWrapper({ userId, initBoxes, initVerb }: Conjuga
       setSelectedBox={handleChangeBox}
       inputVerb={inputVerb}
       formAction={formAction}
-      state={state}
+      state={visibleState}
       handleSkip={handleSkip}
       handleNext={handleNext}
     />
