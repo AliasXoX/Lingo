@@ -12,6 +12,7 @@ const meta = {
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ['autodocs'],
+  render: (args) => <Icon {...args} className="w-10" />,
 } satisfies Meta<typeof Icon>;
 
 export default meta;
@@ -22,42 +23,34 @@ export const Cross: Story = {
   args: {
     name: "cross"
   },
-  render: (args) => (
-    <div className="w-10">
-      <Icon {...args} />
-    </div>
-  )
 };
 
 export const Delete: Story = {
   args: {
     name: "delete"
   },
-  render: (args) => (
-    <div className="w-10">
-      <Icon {...args} />
-    </div>
-  )
 };
 
 export const Edit: Story = {
   args: {
     name: "edit"
   },
-  render: (args) => (
-    <div className="w-10">
-      <Icon {...args} />
-    </div>
-  )
 };
 
 export const Dropdown: Story = {
   args: {
     name: "dropdown"
   },
-  render: (args) => (
-    <div className="w-10">
-      <Icon {...args} />
-    </div>
-  )
+};
+
+export const Logout: Story = {
+  args: {
+    name: "logout"
+  },
+};
+
+export const Menu: Story = {
+  args: {
+    name: "menu"
+  },
 };

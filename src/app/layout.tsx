@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../components/style/globals.css";
 import { Navbar } from "../components/molecules/Navbar/Navbar";
@@ -20,6 +20,11 @@ export const metadata: Metadata = {
   description: "Language learning app",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +38,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-[var(--color-neutral-lighter)]`}
       >
         <div className="w-full px-3 py-4">
-          <Navbar 
+          <Navbar
           content={ user ?  [
             { label: "Home", href: "/" },
             { label: "About", href: "/about" },
