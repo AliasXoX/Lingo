@@ -23,6 +23,7 @@ export interface LearnPanelProps extends React.HTMLAttributes<HTMLDivElement> {
       error: string;
       correct?: undefined;
   } | null;
+  handleSkip?: () => void;
 }
 
 /** Primary UI component for user interaction */
@@ -36,6 +37,7 @@ export const LearnPanel = ({
   inputWord,
   formAction,
   state,
+  handleSkip,
   className = '',
   ...props
 }: LearnPanelProps) => {
@@ -46,7 +48,7 @@ export const LearnPanel = ({
       style={{ backgroundColor : backgroundColor }}
       {...props}
     >
-      <div className="absolute top-5 right-5 flex gap-2">
+      <div className="absolute top-5 right-5 flex gap-2 z-10">
         <button className={`text-white text-sm md:text-base font-bold py-2 px-4 rounded-lg cursor-pointer ${mode === "it" ? "bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)]" : "bg-[var(--color-neutral-dark)] hover:bg-[var(--color-neutral-darker)]"}`} onClick={() => mode !== "it" && handleChangeMode && handleChangeMode()}>
           FR to IT
         </button>
@@ -62,7 +64,12 @@ export const LearnPanel = ({
           </div>
         ))}
       </div>
-      <form action={formAction} className="flex-1 flex flex-col items-center justify-center gap-5 text-center text-lg md:text-2xl">
+      <form action={formAction} className="relative flex-1 flex flex-col items-center justify-center gap-5 text-center text-lg md:text-2xl">
+        <div className="absolute top-5 left-5 flex">
+          <div onClick={handleSkip} className="flex md:w-auto bg-[var(--color-danger-light)] hover:bg-[var(--color-danger-dark)] font-bold py-1 px-3 rounded-lg cursor-pointer">
+            <span className="text-xs md:text-lg text-[var(--color-neutral-lightest)]">Skip</span>
+          </div>
+        </div>
         <div className="flex flex-col md:w-1/2 gap-2 px-1 md:px-0">
           <label htmlFor='translate'>Translate the following word:</label>
           <input
@@ -83,6 +90,7 @@ export const LearnPanel = ({
           />
         </div>
         <button
+          type="submit"
           className="bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)] text-white font-bold py-2 px-4 rounded-lg cursor-pointer"
         >
           Submit Answer

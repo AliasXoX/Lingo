@@ -4,7 +4,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import { LearnPanel } from '@/components/organisms/LearnPanel/LearnPanel';
-import { submitAnswer, getNextWord, getBoxCount } from '@/app/actions/words';
+import { submitAnswer, getNextWord, getBoxCount, downgradeBox } from '@/app/actions/words';
 
 interface LearnPanelWrapperProps {
   initMode: string;
@@ -84,6 +84,13 @@ export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: Lea
     }
   }
 
+  async function handleSkip() {
+    const result = await getNextWord(userId, selectedBox, mode, []);
+    if (result.success) {
+      setInputWord(result.word);
+    }
+  }
+
   return (
     <LearnPanel
       boxes={boxes}
@@ -94,6 +101,7 @@ export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: Lea
       inputWord={inputWord}
       formAction={formAction}
       state={state}
+      handleSkip={handleSkip}
     />
   );
 }

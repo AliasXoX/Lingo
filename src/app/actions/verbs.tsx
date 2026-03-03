@@ -103,7 +103,7 @@ export async function editVerb(userId: number, formData: FormData) {
     const newConjugation = Array.from({ length: size }, (_, i) => (formData.get(`conjugation-${i}`) as string).toLowerCase());
 
     try {
-        const response = await db.query(`UPDATE verbs SET conjugation = $1 WHERE user_id = $2 AND infinitive = $3 AND mode = $4 AND tense = $5`, [newConjugation, userId, infinitive, mode, tense]);
+        await db.query(`UPDATE verbs SET conjugation = $1 WHERE user_id = $2 AND infinitive = $3 AND mode = $4 AND tense = $5`, [newConjugation, userId, infinitive, mode, tense]);
         console.error("Edit verb response:", infinitive);
         return { success: true };
     } catch (error) {
