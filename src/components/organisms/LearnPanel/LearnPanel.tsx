@@ -53,10 +53,10 @@ export const LearnPanel = ({
       {...props}
     >
       <div className="absolute top-5 right-5 flex gap-2 z-10">
-        <button className={`text-white text-sm md:text-base font-bold py-2 px-4 rounded-lg cursor-pointer ${mode === "it" ? "bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)]" : "bg-[var(--color-neutral-dark)] hover:bg-[var(--color-neutral-darker)]"}`} onClick={() => mode !== "it" && handleChangeMode && handleChangeMode()}>
+        <button className={`text-white text-sm md:text-base font-bold py-2 px-4 rounded-lg cursor-pointer ${mode === "it" ? "bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)]" : "bg-[var(--color-neutral-dark)] hover:bg-[var(--color-neutral-darker)]"}`} onClick={() => mode !== "it" && handleChangeMode && handleChangeMode()} disabled={ skip !== null }>
           FR to IT
         </button>
-        <button className={`text-white text-sm md:text-base font-bold py-2 px-4 rounded-lg cursor-pointer ${mode === "fr" ? "bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)]" : "bg-[var(--color-neutral-dark)] hover:bg-[var(--color-neutral-darker)]"}`} onClick={() => mode !== "fr" && handleChangeMode && handleChangeMode()}>
+        <button className={`text-white text-sm md:text-base font-bold py-2 px-4 rounded-lg cursor-pointer ${mode === "fr" ? "bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)]" : "bg-[var(--color-neutral-dark)] hover:bg-[var(--color-neutral-darker)]"}`} onClick={() => mode !== "fr" && handleChangeMode && handleChangeMode()} disabled={ skip !== null }>
           IT to FR
         </button>
       </div>
