@@ -5,7 +5,7 @@ import { useFormState } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Verb } from '../../lib/type';
 import { VerbDictionary } from '@/components/organisms/VerbDictionary/VerbDictionary';
-import { getVerbsByOrder, editVerb, addVerb, deleteVerb } from '../actions/verbs';
+import { getVerbsByOrder, editVerb, addVerb, deleteVerb, scrapVerbsFromWebsite } from '../actions/verbs';
 
 interface VerbsWrapperProps {
     userId: number;
@@ -95,6 +95,14 @@ export function VerbsWrapper({
         return result;
     }
 
+    async function handleScrap(infinitive: string, mode: string, tense: string) {
+        const result = await scrapVerbsFromWebsite(infinitive, mode, tense);
+        if (result.success) {
+            return result.conjugation as string[];
+        }
+        return null;
+    }
+
     return (
         <main className="flex-1 flex-col items-center justify-between px-1 md:px-56">
             <VerbDictionary
@@ -108,6 +116,7 @@ export function VerbsWrapper({
                 deleteAction={handleDeleteAction}
                 addAction={addFormAction}
                 handleTrain={() => router.push('/conjugation')}
+                handleScrap={handleScrap}
             />
         </main>
     );

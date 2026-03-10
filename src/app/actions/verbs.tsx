@@ -1,5 +1,6 @@
 'use server';
 
+import * as cheerio from "cheerio";
 import { db } from "@/lib/db"
 import { ConjugatedVerb, Mode, Tense, Verb } from "@/lib/type";
 
@@ -247,5 +248,66 @@ export async function downgradeBox(userId: number, infinitive: string, mode: str
     } catch (error) {
         console.error("Error downgrading box:", error);
         return { success: false, error: "Failed to downgrade box" };
+    }
+}
+
+export async function scrapVerbsFromWebsite(infinitive: string, mode: string, tense: string) {
+    try {
+        const pronouns = ["io", "tu", "lui", "noi", "voi", "loro"];
+        // search the verb in a json array
+        const url = `https://la-conjugaison.nouvelobs.com/ajx/moteur.php?l=it&q=${infinitive}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        const verb = data[0];
+        if (!verb) {
+            return { success: false, error: "Verb not found on the website" };
+        }
+
+        const verbUrl = `https://la-conjugaison.nouvelobs.com/italien/verbe/${verb}.php`;
+        const verbResponse = await fetch(verbUrl);
+        const verbHtml = await verbResponse.text();
+        const $ = cheerio.load(verbHtml);
+        const conjugation: string[] = [];
+        const $modes = $('h2.mode')
+        $modes.each((index, element) => {
+            const currentMode = $(element.children[0]).text().trim().toLowerCase().split(' ')[0];
+            
+            if (currentMode === mode) {
+                let $tense = $(element).next();
+                while ($tense.is('div')) {
+                    if ($tense.is('.tempstab')) {
+                        const $h3 = $tense.find('h3');
+                        if ($h3.length > 0) {
+                            const currentTense = $h3
+                                .text()
+                                .replace(/\s*\([^)]*\)/g, '')
+                                .trim()
+                                .toLowerCase();
+                            if (currentTense === tense) {
+                                const $conjugations = $tense.find('div.tempscorps');
+                                $conjugations.find('br').replaceWith(' | ');
+                                conjugation.push(...$conjugations.text().trim().split(' | ').map((line) => {
+                                    const words = line.replace('|', '').trim().split(' ').filter(Boolean);
+                                    if (pronouns.includes(words[0].toLowerCase())) {
+                                        words.shift();
+                                    }
+                                    const trimmedLine = words.join(' ').trim();
+                                    return trimmedLine;
+                                }).filter((line) => line !== '-'));
+                                break;
+                            }
+                        }
+                    }
+                    $tense = $tense.next();
+                }
+            }
+        });
+
+        return { success: true, conjugation };
+
+    }
+    catch (error) {
+        console.error("Error scraping verbs:", error);
+        return { success: false, error: "Failed to scrape verbs" };
     }
 }

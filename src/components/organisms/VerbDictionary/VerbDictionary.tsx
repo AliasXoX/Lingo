@@ -19,6 +19,7 @@ export interface VerbDictionaryProps extends React.HTMLAttributes<HTMLDivElement
     deleteAction?: (verb: { infinitive: string, tense: string, mode: string}) => void;
     addAction?: (formData: FormData) => void;
     handleTrain?: () => void;
+    handleScrap?: (infinitive: string, mode: Mode, tense: Tense) => Promise<string[] | null>;
 }
 
 const EditModal = ({ verb, isOpen, editAction, onClose }: { verb: ConjugatedVerb; isOpen: boolean; editAction?: (formData: FormData) => void; onClose?: () => void }) => {
@@ -91,7 +92,7 @@ const Delete = ({ verb, isOpen, deleteAction, onClose }: { verb: { infinitive: s
     );
 }
 
-const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?: (formData: FormData) => void; onClose?: () => void }) => {
+const AddModal = ({ isOpen, addAction, scrap, onClose }: { isOpen: boolean; addAction?: (formData: FormData) => void; scrap?: (infinitive: string, mode: Mode, tense: Tense) => Promise<string[] | null>; onClose?: () => void }) => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -116,9 +117,13 @@ const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?:
         }
     }
 
+    const [infinitive, setInfinitive] = useState('');
+
     const [mode, setMode] = useState<Mode>('indicativo');
 
     const [tense, setTense] = useState<Tense>('presente');
+
+    const [inputs, setInputs] = useState<string[]>([]);
 
     const pronouns = modeToPronouns(mode);
 
@@ -129,10 +134,21 @@ const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?:
                 <button className="absolute top-2 right-2 p-1 rounded-full cursor-pointer hover:bg-[var(--color-neutral-lighter)]" onClick={() => onClose?.()}>
                     <Icon name="cross" className="w-5"/>
                 </button>
+                <button className="absolute top-1 left-2 p-1 rounded-full cursor-pointer bg-[var(--color-neutral-lighter)] hover:bg-[var(--color-neutral-light)]" onClick={async () => {
+                    if (scrap) {
+                        const scrapedData = await scrap(infinitive, mode, tense);
+                        if (scrapedData) {
+                            const conjugation = scrapedData;
+                            setInputs(conjugation);
+                        }
+                    }
+                }}>
+                    <span className="text-sm">Scrap</span>
+                </button>
                 <form onSubmit={handleSubmit} className="flex flex-col w-full gap-3">
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="infinitive" className="block text-sm font-medium text-gray-700">Infinitive</label>
-                        <input required type="text" name="infinitive" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" />
+                        <input required type="text" name="infinitive" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" value={infinitive} onChange={(e) => setInfinitive(e.target.value)} />
                     </div>
                     <div className="flex flex-col w-full gap-1">
                         <label htmlFor="mode" className="block text-sm font-medium text-gray-700">Mode</label>
@@ -159,7 +175,11 @@ const AddModal = ({ isOpen, addAction, onClose }: { isOpen: boolean; addAction?:
                                 <label key={`pronoun-${index}`} htmlFor={`conjugation-${index}`} className="capitalize flex items-center justify-end text-nowrap">{pronoun}</label>
                             ))}
                             {pronouns.map((_, index) => (
-                                <input key={`input-${index}`} name={`conjugation-${index}`} type="text" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" required />
+                                <input key={`input-${index}`} name={`conjugation-${index}`} type="text" className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full" value={inputs[index] || ''} onChange={(e) => {
+                                    const newInputs = [...inputs];
+                                    newInputs[index] = e.target.value;
+                                    setInputs(newInputs);
+                                }} required />
                             ))}
                             
                         </div>
@@ -186,6 +206,7 @@ export const VerbDictionary = ({
   deleteAction,
   addAction,
   handleTrain,
+  handleScrap,
   className = '',
   ...props
 }: VerbDictionaryProps) => {
@@ -296,7 +317,7 @@ export const VerbDictionary = ({
 
         <EditModal verb={editVerb} isOpen={isEditModalOpen} editAction={editAction} onClose={() => setIsEditModalOpen(false)} />
         <Delete verb={deleteVerb} isOpen={isDeleteModalOpen} deleteAction={deleteAction} onClose={() => setIsDeleteModalOpen(false)} />
-        <AddModal isOpen={isAddModalOpen} addAction={addAction} onClose={() => setIsAddModalOpen(false)} />
+        <AddModal isOpen={isAddModalOpen} addAction={addAction} onClose={() => setIsAddModalOpen(false)} scrap={handleScrap} />
     </div>
   );
 };
