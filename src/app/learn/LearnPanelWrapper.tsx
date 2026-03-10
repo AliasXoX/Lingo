@@ -4,7 +4,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useFormState } from 'react-dom';
 import { LearnPanel } from '@/components/organisms/LearnPanel/LearnPanel';
-import { submitAnswer, getNextWord, getBoxCount, downgradeBox } from '@/app/actions/words';
+import { submitAnswer, getNextWord, getBoxCount, getWord } from '@/app/actions/words';
 
 interface LearnPanelWrapperProps {
   initMode: string;
@@ -22,6 +22,15 @@ export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: Lea
   const [inputWord, setInputWord] = useState(initWord);
   const [update, setUpdate] = useState(true); // update box after submit if true
   const [mode, setMode] = useState(initMode);
+  const [visibleState, setVisibleState] = useState<{
+      success: boolean;
+      correct: boolean;
+      error?: undefined;
+    } | {
+        success: boolean;
+        error: string;
+        correct?: undefined;
+    } | null>(null);
 
   async function handleChangeMode() {
     const newMode = mode === "it" ? "fr" : "it";
@@ -57,6 +66,7 @@ export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: Lea
     formData: FormData
   ) {
     const result = await submitAnswer(mode, userId, update, null, formData);
+    setVisibleState(result);
     if (result.success) {
       // After submitting the answer, we should get the next word if answer is correct
       if (result.correct) {
@@ -74,7 +84,7 @@ export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: Lea
     return result;
   }
   
-  const [state, formAction] = useFormState(submitAction, null);
+  const [, formAction] = useFormState(submitAction, null);
   
   async function handleChangeBox(newBox: number) {
     setSelectedBox(newBox);
@@ -85,10 +95,29 @@ export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: Lea
   }
 
   async function handleSkip() {
+    if (!inputWord) {
+      return;
+    }
+    const result = await getWord(userId, inputWord, mode);
+    if (result.success) {
+      if (Array.isArray(result.word)) {
+        return result.word;
+      }
+      return String(result.word)
+        .split('||')
+        .map((word) => word.trim())
+        .filter(Boolean);
+    }
+    return;
+  }
+
+  async function handleNext() {
     const result = await getNextWord(userId, selectedBox, mode, []);
     if (result.success) {
       setInputWord(result.word);
+      setUpdate(true);
     }
+    setVisibleState(null);
   }
 
   return (
@@ -100,8 +129,10 @@ export function LearnPanelWrapper({ initMode, userId, initBoxes, initWord }: Lea
       setSelectedBox={handleChangeBox}
       inputWord={inputWord}
       formAction={formAction}
-      state={state}
+      state={visibleState}
       handleSkip={handleSkip}
+      handleNext={handleNext}
+
     />
   );
 }

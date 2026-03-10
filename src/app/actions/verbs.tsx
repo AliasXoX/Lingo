@@ -52,13 +52,13 @@ export async function submitAnswer(
                 }
                 return { success: true, correct: true };
             } else {
+                if (update) {
+                    await downgradeBox(userId, infinitive, mode, tense);
+                }
                 return { success: true, correct: false };
             }
         }
         else {
-            if (update) {
-                await downgradeBox(userId, infinitive, mode, tense);
-            }
             return { success: false, error: result.error || "Unknown error" };
         }
     } catch (error) {
@@ -242,7 +242,7 @@ export async function upgradeBox(userId: number, infinitive: string, mode: strin
 export async function downgradeBox(userId: number, infinitive: string, mode: string, tense: string, minBox: number = 0) {
     const dateNow = new Date();
     try {
-        await db.query(`UPDATE verbs SET box = box - 1, date = $5 WHERE user_id = $1 AND infinitive = $2 AND mode = $3 AND tense = $4 AND box > $6`, [userId, infinitive, mode, tense, dateNow, minBox]);
+        await db.query(`UPDATE verbs SET box = $6, date = $5 WHERE user_id = $1 AND infinitive = $2 AND mode = $3 AND tense = $4 AND box > $6`, [userId, infinitive, mode, tense, dateNow, minBox]);
         return { success: true };
     } catch (error) {
         console.error("Error downgrading box:", error);

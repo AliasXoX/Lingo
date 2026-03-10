@@ -12,6 +12,21 @@ type SubmitAnswerState = {
     correct?: undefined;
 } | null;
 
+export async function getWord(userId: number, word: string, mode: string) {
+    const unmode = mode === "it" ? "fr" : "it";
+    try {
+        const result = await db.query(`SELECT ${mode} FROM words WHERE user_id = $1 AND ${unmode} = $2`, [userId, word]);
+        if (result.rows.length > 0) {
+            return { success: true, word: result.rows[0][mode] };
+        } else {
+            return { success: false, error: "Word not found" };
+        }
+    } catch (error) {
+        console.error("Error fetching word:", error);
+        return { success: false, error: "Failed to fetch word" };
+    }
+}
+
 export async function submitAnswer(
     mode: string,
     userId: number,
@@ -166,13 +181,14 @@ export async function upgradeBox(userId: number, it: string, fr: string, mode: s
 }
 
 export async function downgradeBox(userId: number, it: string, fr: string, mode: string, minBox: number = 0) {
+    // sends directly to box 0, no matter the current box
     it = it.toLowerCase();
     fr = fr.toLowerCase();
     
     const dateNow = new Date();
     const boxMode = mode === "it" ? 'box' : 'box_inverse';
     try {
-        await db.query(`UPDATE words SET ${boxMode} = ${boxMode} - 1, date = $4 WHERE user_id = $1 AND it = $2 AND fr = $3 AND ${boxMode} > $5`, [userId, it, fr, dateNow, minBox]);
+        await db.query(`UPDATE words SET ${boxMode} = $5, date = $4 WHERE user_id = $1 AND it = $2 AND fr = $3 AND ${boxMode} > $5`, [userId, it, fr, dateNow, minBox]);
         return { success: true };
     } catch (error) {
         console.error("Error downgrading box:", error);

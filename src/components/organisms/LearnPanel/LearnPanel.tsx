@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
 export interface LearnPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   /** What background color to use */
@@ -23,7 +23,8 @@ export interface LearnPanelProps extends React.HTMLAttributes<HTMLDivElement> {
       error: string;
       correct?: undefined;
   } | null;
-  handleSkip?: () => void;
+  handleSkip?: () => Promise<string[] | void>;
+  handleNext?: () => void;
 }
 
 /** Primary UI component for user interaction */
@@ -38,9 +39,12 @@ export const LearnPanel = ({
   formAction,
   state,
   handleSkip,
+  handleNext,
   className = '',
   ...props
 }: LearnPanelProps) => {
+
+  const [skip, setSkip] = useState<string[] | null>(null);
 
   return (
     <div
@@ -66,9 +70,22 @@ export const LearnPanel = ({
       </div>
       <form action={formAction} className="relative flex-1 flex flex-col items-center justify-center gap-5 text-center text-lg md:text-2xl">
         <div className="absolute top-5 left-5 flex">
-          <div onClick={handleSkip} className="flex md:w-auto bg-[var(--color-danger-light)] hover:bg-[var(--color-danger-dark)] font-bold py-1 px-3 rounded-lg cursor-pointer">
-            <span className="text-xs md:text-lg text-[var(--color-neutral-lightest)]">Skip</span>
-          </div>
+          {!skip && (
+            <div onClick={async () => {
+              const skipped = await handleSkip?.();
+              setSkip(skipped || null);
+            }} className="flex md:w-auto bg-[var(--color-danger-light)] hover:bg-[var(--color-danger-dark)] font-bold py-1 px-3 rounded-lg cursor-pointer">
+              <span className="text-xs md:text-lg text-[var(--color-neutral-lightest)]">Skip</span>
+            </div>
+          )}
+          {skip && (
+            <div onClick={() => {
+              handleNext?.();
+              setSkip(null);
+            }} className="flex md:w-auto bg-gray-300 hover:bg-gray-400 font-bold py-1 px-3 rounded-lg cursor-pointer">
+              <span className="text-xs md:text-lg text-gray-500">Next</span>
+            </div>
+          )}
         </div>
         <div className="flex flex-col md:w-1/2 gap-2 px-1 md:px-0">
           <label htmlFor='translate'>Translate the following word:</label>
@@ -82,16 +99,24 @@ export const LearnPanel = ({
         </div>
         <div className="flex flex-col md:w-1/2 gap-2 px-1 md:px-0">
           <label htmlFor='answer'>Your answer:</label>
-          <input
+          {!skip && (<input
             className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full"
             type="text"
             name='answer'
             required
-          />
+          />)}
+          {skip && (<input
+            className="border-2 border-gray-300 rounded-lg px-4 py-2 font-[family-name:var(--font-input)] text-gray-900 w-full"
+            type="text"
+            name='answer'
+            disabled
+            value={skip.join(" || ")}
+          />)}
         </div>
         <button
           type="submit"
           className="bg-[var(--color-action-dark)] hover:bg-[var(--color-action-darker)] text-white font-bold py-2 px-4 rounded-lg cursor-pointer"
+          disabled={skip !== null}
         >
           Submit Answer
         </button>
